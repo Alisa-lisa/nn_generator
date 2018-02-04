@@ -1,6 +1,6 @@
 # nn_generator
 Allows rapid prototyping of a simple NN by providing a config file
-### Current usage:
+### Current usage example:
 ```python
   # data preparation -> feature extraction, normalization, etc.
   X_train, Y_train = generator.create_input_structure('examples/training_set.csv')
@@ -16,22 +16,43 @@ Allows rapid prototyping of a simple NN by providing a config file
   predicted2 = nn.predict(X_test, model, depth, True)
   accuracy_test = nn.compute_accuracy(predicted, Y_test)
   print("test accuracy is: {}".format(accuracy_test))
+  
+  saved_model, saved_meta = generator.read_out_model("WHERE_TO_FIND")
 
   plot_predictions(None, predicted2.T, Y_test[0])
 
 ```
-
-1. architecture dictionary is the description of desired NN configuration:
-  keys: the number of the hidden layer
-  values: number of nodes in the laye
-  
-2. currently only simple Gradient Descent is implemented
-3. turnoff the seed to get "the best" random initialized parameters
-    currently the seed is optimized for the example data
-
-4. the model can be saved and read output with:
+The data in the example describes a cyclic behaviour over a certain time.
+In order to build a model best capturing this time patterns there are 3 questions 
+to fine-tune in the whole process:
+1. What data (features) should I feed in?
+  - In this case example_processor turns a timestamp into 4 numeric features
+  - You can think of any other features to draw out of a time stamp
+  or reduce the number of features to see how it works.
+2. What model (architecture) could be suitable?
+  - Would you like to start withe a shallow model?
+  - Compare not so deep models with a deeper version?
+  - Save the resulting parameters and use prediction function to compare those.
+  example config builds a 3-layered nn, also you can find a saved shallow model for a comparison.
 ```python
-  generator.save_model("WHERE_TO_SAVE", model, meta)
-  saved_model, saved_meta = generator.read_out_model("WHERE_TO_FIND")    
-
+  model1, meta1 = generator.read_out_model("MODEL1")
+  model2, meta2 = generator.read_out_model("MODEL2")
+  
+  predicted1 = nn.predict(X_test, model1, depth, False)
+  predicted2 = nn.predict(X_test, model2, depth, False)
+  accuracy1 = nn.compute_accuracy(predicted1, Y_test)
+  accuracy1 = nn.compute_accuracy(predicted2, Y_test)
+  
+  # compare accuracy -> decide on model
 ```
+3. How do I want to train my model?
+  - Depending on the amount of data this question might vary.
+  - For the given example you can play around with the learning rate and iterations number
+
+Current limitations (wip):
+1. Only Gradient Descent is available
+2. N-1 hidden layers use RELU as activation function, N-th layer uses sigmoid
+3. Only Json config is allowed
+4. Only simple NN are implemented (no CNN, RNN, etc.)
+5. More visualizations are comming
+6. CPU execution only (numpy implementation)
