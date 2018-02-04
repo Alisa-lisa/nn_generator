@@ -7,6 +7,9 @@ import preprocessing.example_preprocessor as process
 
 numpy.warnings.filterwarnings('ignore')
 
+
+SET_UP_KEYS = ["architecture","learning_rate","iterations","seeded","seed"]
+
 def create_input_structure(filename):
     """
     Reads out the data from the original file
@@ -69,9 +72,41 @@ def read_out_model(filename):
             return {}, {}
 
 
+def read_out_config(config_name):
+    """ As you could guess, reads config from file"""
+    with open(config_name, 'r') as config:
+        try:
+            res = {}
+            config_raw = json.load(config)
+            if not set(SET_UP_KEYS).issubset(config_raw.keys()):
+                raise ValueError("Configuration is incomplete")
+            else:
+                for k, v in config_raw.items():
+                    if k=="architecture":
+                        res[k] = {}
+                        for k1, v1 in v.items():
+                            res[k].update({int(k1):int(v1)})
+                    else:
+                        res[k] = v
+                return res
+        except ValueError:
+            raise ValueError("Could not read the config file")
+
+
 class SimpleNN(object):
-    def __init__(self):
-        self.meta = {}
+    def __init__(self, config):
+        self.config = self.init_config(config)
+
+    @staticmethod
+    def init_config(config):
+        if not config:
+            raise ValueError("Empty config is not allowed")
+        elif set(SET_UP_KEYS).issubset(config.keys()):
+            return config
+        else:
+            print(config)
+            raise ValueError("The config is not complete")
+
 
     @staticmethod
     def _init_params(X, Y, hidden_units, seeded=False, seed=345):
@@ -224,7 +259,7 @@ class SimpleNN(object):
 
         return accuracy
 
-    def create_and_train_shallow_nn(self, X, Y, learning_rate, iterations, hidden_units, seed, seeded=False):
+    def create_and_train_nn(self, X, Y):
         """ Simple numpy implementation of a shallow NN training process:
          1. initialize parameters
          2. forward prop
@@ -235,23 +270,26 @@ class SimpleNN(object):
          :param X: features input vector
          :param Y: expected output
          :param iterations: int amount of recalculations
-         :param hidden_units: dict desired structure {layer_number: amount of units}
+         :param architecture: dict desired structure {layer_number: amount of units}
          :param seed: int seed to make results reproducible
          :param seeded: bool to use seed or not
 
          :return: dict model parameters, meta information
          """
         # init params
-        depth = len(hidden_units.keys())
-        params, seed = self._init_params(X, Y, hidden_units, seeded, seed)
+        depth = len(self.config["architecture"].keys())
+        params, seed = self._init_params(X, Y, self.config["architecture"],
+                                         self.config["seeded"],
+                                         self.config["seed"])
         cache = ()
-        for i in range(0, iterations):
+        for i in range(0, self.config["iterations"]):
             # forward propagation
             cost, cache = self.forward_prop(X, Y, params, depth)
             # backward propagation
             gradients = self.back_prop(X, Y, params, cache, depth)
             # update weights
-            self.update_params(params, gradients, learning_rate, depth)
+            self.update_params(params, gradients,
+                               self.config["learning_rate"], depth)
 
         accuracy = self.compute_accuracy(cache["A"+str(depth)], Y)
 
@@ -260,10 +298,16 @@ class SimpleNN(object):
         for k, v in params.items():
             model[k] = v
         # meta information describing the architecture and the training process
-        self.meta = {"seeded":[seeded, seed],
-                "architecture": {"arch": hidden_units, "depth": depth},
+        # for now overlaps with the config and some hardcoded info
+        # later will be completely replaced with the config
+        meta = {"seeded":[self.config["seeded"], seed],
+                "architecture": {"arch": self.config["architecture"],
+                                 "depth": depth},
                 "results": {"accuracy": accuracy},
-                "training":{"backprop": "GD", "learning_rate": learning_rate,
-                            "iterations": iterations, "train size":X.shape[1],
-                            "AF":["RELU", "sigmoid"]}}
-        return model, self.meta
+                "training":{"backprop": "GD",
+                            "learning_rate": self.config["learning_rate"],
+                            "iterations": self.config["iterations"],
+                            "train size":X.shape[1],
+                            "AF":["RELU", "sigmoid"]}
+                     }
+        return model, meta
