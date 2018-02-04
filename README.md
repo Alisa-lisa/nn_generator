@@ -2,6 +2,11 @@
 Allows rapid prototyping of a simple NN by providing a config file
 ### Current usage example:
 ```python
+  from visualization.simple_plot import plot_predictions
+  from config_parser import json_config
+  from model_generator.simple_nn import SimpleNN
+  import model_generator.simple_nn as generator
+
   # data preparation -> feature extraction, normalization, etc.
   X_train, Y_train = generator.create_input_structure('examples/training_set.csv')
   X_test, Y_test = generator.create_input_structure('examples/test_set.csv')
