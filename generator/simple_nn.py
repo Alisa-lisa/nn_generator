@@ -5,7 +5,6 @@ import json
 import logging
 import preprocessing.example_preprocessor as process
 
-# TODO: make it regex dependent (devision by zero due to binary nature of the output)
 numpy.warnings.filterwarnings('ignore')
 
 def create_input_structure(filename):

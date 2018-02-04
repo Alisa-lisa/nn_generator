@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
-
-def plot_results(timestamps, A, B):
+def plot_predictions(timestamps, A, B):
     t = [i for i in range(len(A))]
     # predicted
     plt.plot(t, A, linewidth=3.0, color="blue")
