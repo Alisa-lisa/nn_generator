@@ -1,6 +1,7 @@
 from visualization.simple_plot import plot_predictions
-from generator.simple_nn import SimpleNN
-import generator.simple_nn as generator
+from config_parser import json_config
+from model_generator.simple_nn import SimpleNN
+import model_generator.simple_nn as generator
 
 if __name__ == '__main__':
     # data preparation -> feature extraction, normalization, etc.
@@ -8,7 +9,7 @@ if __name__ == '__main__':
     X_test, Y_test = generator.create_input_structure('examples/test_set.csv')
 
     # desired NN architecture (last layer is always an output layer)
-    config = generator.read_out_config("examples/example_config.json")
+    config = json_config.read_out_config("examples/example_config.json")
     nn = SimpleNN(config)
     model, meta = nn.create_and_train_nn(X_train, Y_train)
 
