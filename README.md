@@ -2,13 +2,14 @@
 Allows rapid prototyping of a simple NN by providing a config file
 ### Current usage:
 ```python
-# prepare your data (here we use example data for this project)
+  # data preparation -> feature extraction, normalization, etc.
   X_train, Y_train = generator.create_input_structure('examples/training_set.csv')
   X_test, Y_test = generator.create_input_structure('examples/test_set.csv')
 
-  # desired NN architecture (last layer is always an output layer)
-  architecture = {1:12, 2:4, 3:1}
-  model, meta = nn.create_and_train_shallow_nn(X_train, Y_train, learning_rate = 0.01, iterations=5000, hidden_units=architecture, seed=345, seeded=True)
+  # make sure that all parameters are filled in
+  config = generator.read_out_config("examples/example_config.json")
+  nn = SimpleNN(config)
+  model, meta = nn.create_and_train_nn(X_train, Y_train)
 
   depth = meta["architecture"]["depth"]
   predicted = nn.predict(X_test, model, depth, False)
