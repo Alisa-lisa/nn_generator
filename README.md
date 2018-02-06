@@ -1,44 +1,49 @@
 # nn_generator
 Allows rapid prototyping of a simple NN by providing a config file
-### Current usage example:
+### Usage example:
 ```python
-  from visualization.simple_plot import plot_predictions
-  from config_parser import json_config
-  from model_generator.simple_nn import SimpleNN
-  import model_generator.simple_nn as generator
+from visualization.simple_plot import simple_plot_predictions
+from config_parser import config_parser
+from model_generator.simple_nn import SimpleNN
+import model_generator.simple_nn as generator
+import matplotlib.pyplot as plt
 
-  # data preparation -> feature extraction, normalization, etc.
-  X_train, Y_train = generator.create_input_structure('examples/training_set.csv')
-  X_test, Y_test = generator.create_input_structure('examples/test_set.csv')
+if __name__ == '__main__':
+    # data preparation -> feature extraction, normalization, etc.
+    t, X_train, Y_train = generator.create_input_structure('examples/training_set.csv')
+    t_test, X_test, Y_test = generator.create_input_structure('examples/test_set.csv')
 
-  # make sure that all parameters are filled in
-  config = json_config.read_out_config("examples/example_config.json")
-  nn = SimpleNN(config)
-  model, meta = nn.create_and_train_nn(X_train, Y_train)
+    config = config_parser.read_out_config("examples/example_config.json")
+    nn = SimpleNN(config)
+    model, meta = nn.create_and_train_nn(X_train, Y_train)
 
-  depth = meta["architecture"]["depth"]
-  predicted = nn.predict(X_test, model, depth, False)
-  predicted2 = nn.predict(X_test, model, depth, True)
-  accuracy_test = nn.compute_accuracy(predicted, Y_test)
-  print("test accuracy is: {}".format(accuracy_test))
-  
-  saved_model, saved_meta = generator.read_out_model("WHERE_TO_FIND")
+    depth = meta["architecture"]["depth"]
+    predicted = nn.predict(X_test, model, depth, False)
+    predicted2 = nn.predict(X_test, model, depth, True)
+    accuracy_test = nn.compute_accuracy(predicted, Y_test)
+    print("test accuracy is: {}".format(accuracy_test))
 
-  plot_predictions(None, predicted2.T, Y_test[0])
+    simple_plot_predictions(t_test,
+                            predicted2.T, Y_test[0],
+                            "state", "time",
+                            True, "examples/3_layer_nn.png")
+    # needed for matplotlib to keep plots opened
+    plt.show()
 
 ```
 The data in the example describes a cyclic behaviour over a certain time.
-In order to build a model best capturing this time patterns there are 3 questions 
-to fine-tune in the whole process:
-1. What data (features) should I feed in?
+In order to build a model best capturing these time patterns there are 3 questions
+to answer:
+1. What data (features) should I use?
   - In this case example_processor turns a timestamp into 4 numeric features
   - You can think of any other features to draw out of a time stamp
-  or reduce the number of features to see how it works.
+  or reduce the number of the features to see how it works.
 2. What model (architecture) could be suitable?
   - Would you like to start withe a shallow model?
   - Compare not so deep models with a deeper version?
   - Save the resulting parameters and use prediction function to compare those.
   example config builds a 3-layered nn, also you can find a saved shallow model for a comparison.
+### Models comparison example:
 ```python
   model1, meta1 = generator.read_out_model("PATH_TO_MODEL1")
   model2, meta2 = generator.read_out_model("PATH_TO_MODEL2")
@@ -54,10 +59,24 @@ to fine-tune in the whole process:
   - Depending on the amount of data this question might vary.
   - For the given example you can play around with the learning rate and iterations number
 
+4. As a simple debugging tools cost plotting is implemented. Add: ```"show_cost": true```
+to the config file, otherwise the plot will not be created
+
+5. Configuration file must have following keys:
+    - "architecture":dict
+    - "learning_rate":float
+    - "iterations":int
+    - "seeded":bool
+    - "seed":int
+configuration file can have:
+    - "activation":dict
+    - "show_cost":bool
+activation key must have the same structure as the architecture but with AF names in values
+
+
 Current limitations (wip):
 1. Only Gradient Descent is available
-2. N-1 hidden layers use RELU as activation function, N-th layer uses sigmoid
-3. Only Json config is allowed
+2. RELU and sigmoid are the only AF
 4. Only simple NN are implemented (no CNN, RNN, etc.)
 5. More visualizations are comming
 6. CPU execution only (numpy implementation)
