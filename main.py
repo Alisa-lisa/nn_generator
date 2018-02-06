@@ -1,4 +1,4 @@
-from visualization.simple_plot import plot_predictions
+from visualization.simple_plot import simple_plot_predictions
 from config_parser import config_parser
 from model_generator.simple_nn import SimpleNN
 import model_generator.simple_nn as generator
@@ -21,4 +21,7 @@ if __name__ == '__main__':
     accuracy_test = nn.compute_accuracy(predicted, Y_test)
     print("test accuracy is: {}".format(accuracy_test))
 
-    plot_predictions(t_test, predicted2.T, Y_test[0], "state", "time")
+    simple_plot_predictions(t_test,
+                            predicted2.T, Y_test[0],
+                            "state", "time",
+                            True, "examples/3_layer_nn.png")
