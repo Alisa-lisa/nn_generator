@@ -148,7 +148,6 @@ class SimpleNN(object):
             cache["Z"+str(layer)] = (numpy.dot(params["W"+str(layer)],
                                               cache["A"+str(layer-1)])
                                      + params["b"+str(layer)])
-            print()
             if activation_provided:
                 activation = self.config["activation"][layer]
                 cache["A"+str(layer)] = activation_function(activation, cache["Z"+str(layer)])
