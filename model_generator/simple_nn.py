@@ -8,7 +8,8 @@ import preprocessing.example_preprocessor as process
 # If you need numpy warnings comment out this line
 numpy.warnings.filterwarnings('ignore')
 
-MINIMAL_SET_UP_KEYS = ["architecture", "learning_rate", "iterations", "seeded", "seed"]
+MINIMAL_SET_UP_KEYS = ["architecture", "learning_rate", "iterations",
+                       "seeded", "seed"]
 
 def create_input_structure(filename):
     """
@@ -27,11 +28,13 @@ def create_input_structure(filename):
         # skip header
         next(raw_data)
         reader = csv.reader(raw_data, delimiter=',')
+        timestamps = []
         for row in reader:
+            timestamps.append(row[0])
             X.append(process.extract_features(row[0]))
             Y.append(math.floor(float(row[1])))
 
-    return numpy.array(X).T, numpy.array([Y])
+    return timestamps, numpy.array(X).T, numpy.array([Y])
 
 
 def sigmoid(x):
@@ -150,13 +153,16 @@ class SimpleNN(object):
                                      + params["b"+str(layer)])
             if activation_provided:
                 activation = self.config["activation"][layer]
-                cache["A"+str(layer)] = activation_function(activation, cache["Z"+str(layer)])
+                cache["A"+str(layer)] = activation_function(activation,
+                                                            cache["Z"+str(layer)])
             else:
                 cache["A"+str(layer)] = numpy.maximum(cache["Z"+str(layer)], 0)
 
-        cache["Z"+str(depth)] = numpy.dot(params["W"+str(depth)], cache["A"+str(depth-1)]) + params["b"+str(depth)]
+        cache["Z"+str(depth)] = numpy.dot(params["W"+str(depth)],
+                                          cache["A"+str(depth-1)]) + params["b"+str(depth)]
         if activation_provided:
-            cache["A"+str(depth)] = activation_function(self.config["activation"][depth],cache["Z"+str(depth)])
+            af = self.config["activation"][depth]
+            cache["A"+str(depth)] = activation_function(af, cache["Z"+str(depth)])
         else:
             cache["A"+str(depth)] = sigmoid(cache["Z"+str(depth)])
 
@@ -274,7 +280,8 @@ class SimpleNN(object):
          :param X: features input vector
          :param Y: expected output
          :param iterations: int amount of recalculations
-         :param architecture: dict desired structure {layer_number: amount of units}
+         :param architecture: dict desired structure
+         {layer_number: amount of units}
          :param seed: int seed to make results reproducible
          :param seeded: bool to use seed or not
 
@@ -313,9 +320,9 @@ class SimpleNN(object):
                                  "AF": activation,
                                  "depth": depth},
                 "results": {"accuracy": accuracy},
-                "training":{"backprop": "GD",
+                "training":{"learning algo": "GD",
                             "learning_rate": self.config["learning_rate"],
                             "iterations": self.config["iterations"],
-                            "train size":X.shape[1]}
+                            "train size": X.shape[1]}
                 }
         return model, meta
