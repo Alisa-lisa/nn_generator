@@ -11,6 +11,7 @@
   },
   "learning_rate": 0.01,
   "iterations": 5000,
+  "show_cost": true,
   "seeded": true,
   "seed": 345
 }

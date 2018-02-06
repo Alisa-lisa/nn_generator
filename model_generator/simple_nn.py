@@ -4,6 +4,7 @@ import csv
 import json
 import logging
 import preprocessing.example_preprocessor as process
+from visualization.simple_plot import simple_cost_plot
 
 # If you need numpy warnings comment out this line
 numpy.warnings.filterwarnings('ignore')
@@ -293,9 +294,11 @@ class SimpleNN(object):
                                          self.config["seeded"],
                                          self.config["seed"])
         cache = ()
+        cost_dev = []
         for i in range(0, self.config["iterations"]):
             # forward propagation
             cost, cache = self.forward_prop(X, Y, params, depth)
+            cost_dev.append(cost)
             # backward propagation
             gradients = self.back_prop(X, Y, params, cache, depth)
             # update weights
@@ -304,13 +307,15 @@ class SimpleNN(object):
 
         accuracy = self.compute_accuracy(cache["A"+str(depth)], Y)
 
-        # examples parameters
+        if "show_cost" in self.config.keys() and self.config["show_cost"]:
+            simple_cost_plot([i for i in range(0, self.config["iterations"])],
+                             cost_dev, "cost function", "iterations numbers",
+                             save=False, name="default")
+
         model = {}
         for k, v in params.items():
             model[k] = v
-        # meta information describing the architecture and the training process
-        # for now overlaps with the config and some hardcoded info
-        # later will be completely replaced with the config
+
         if "activation" in self.config.keys():
             activation = self.config["activation"]
         else:

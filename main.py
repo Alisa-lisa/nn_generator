@@ -2,6 +2,7 @@ from visualization.simple_plot import simple_plot_predictions
 from config_parser import config_parser
 from model_generator.simple_nn import SimpleNN
 import model_generator.simple_nn as generator
+import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     # data preparation -> feature extraction, normalization, etc.
@@ -25,3 +26,5 @@ if __name__ == '__main__':
                             predicted2.T, Y_test[0],
                             "state", "time",
                             True, "examples/3_layer_nn.png")
+    # needed for matplotlib to keep plots opened
+    plt.show()
