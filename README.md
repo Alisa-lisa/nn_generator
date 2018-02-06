@@ -40,11 +40,11 @@ to fine-tune in the whole process:
   - Save the resulting parameters and use prediction function to compare those.
   example config builds a 3-layered nn, also you can find a saved shallow model for a comparison.
 ```python
-  model1, meta1 = generator.read_out_model("MODEL1")
-  model2, meta2 = generator.read_out_model("MODEL2")
+  model1, meta1 = generator.read_out_model("PATH_TO_MODEL1")
+  model2, meta2 = generator.read_out_model("PATH_TO_MODEL2")
   
-  predicted1 = nn.predict(X_test, model1, depth, False)
-  predicted2 = nn.predict(X_test, model2, depth, False)
+  predicted1 = nn.predict(X_test, model1, meta1["architecture"]["depth"], False)
+  predicted2 = nn.predict(X_test, model2, meta2["architecture"]["depth"], False)
   accuracy1 = nn.compute_accuracy(predicted1, Y_test)
   accuracy1 = nn.compute_accuracy(predicted2, Y_test)
   

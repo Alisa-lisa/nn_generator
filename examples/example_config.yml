@@ -1,0 +1,8 @@
+architecture:
+  1: 12
+  2: 4
+  3: 1
+learning_rate: 0.01
+iterations: 5000
+seeded: true
+seed: 345

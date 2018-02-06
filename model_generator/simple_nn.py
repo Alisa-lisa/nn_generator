@@ -5,8 +5,8 @@ import json
 import logging
 import preprocessing.example_preprocessor as process
 
+# If you need numpy warnings comment out this line
 numpy.warnings.filterwarnings('ignore')
-
 
 SET_UP_KEYS = ["architecture","learning_rate","iterations","seeded","seed"]
 
@@ -49,7 +49,7 @@ def save_model(filename, model_dict, meta):
     for k, v in model_dict.items():
         model[k] = v.tolist()
 
-    with open("examples/{}.json".format(filename), 'w') as model_file:
+    with open("{}.json".format(filename), 'w') as model_file:
         json.dump({"model":model, "meta":meta}, model_file)
 
 
@@ -59,7 +59,7 @@ def read_out_model(filename):
     :param filename: path to teh stored model
     :return: dict with params and dict with training details
     """
-    with open("examples/{}.json".format(filename), "r") as input_model:
+    with open("{}.json".format(filename), "r") as input_model:
         try:
             model_and_meta = json.load(input_model)
             model = {}
