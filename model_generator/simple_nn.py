@@ -8,7 +8,7 @@ import preprocessing.example_preprocessor as process
 # If you need numpy warnings comment out this line
 numpy.warnings.filterwarnings('ignore')
 
-SET_UP_KEYS = ["architecture","learning_rate","iterations","seeded","seed"]
+MINIMAL_SET_UP_KEYS = ["architecture", "learning_rate", "iterations", "seeded", "seed"]
 
 def create_input_structure(filename):
     """
@@ -24,6 +24,7 @@ def create_input_structure(filename):
     X = []
     Y = []
     with open(filename, 'r') as raw_data:
+        # skip header
         next(raw_data)
         reader = csv.reader(raw_data, delimiter=',')
         for row in reader:
@@ -36,6 +37,24 @@ def create_input_structure(filename):
 def sigmoid(x):
    return 1 / (1 + numpy.exp(-x))
 
+
+def relu(x):
+    return numpy.maximum(x, 0)
+
+
+def activation_function(activation_name, X):
+    """ Uses proper AF
+    :param activation_name: String representing the function
+    :param X: array to apply AF to
+    :return: calls proper operation
+    """
+    if activation_name.lower() == "relu":
+        return relu(X)
+    elif activation_name.lower() == "sigmoid":
+        return sigmoid(X)
+    else:
+        raise NameError("No AF with the name {} "
+                        "is allowed".format(activation_name))
 
 def save_model(filename, model_dict, meta):
     """
@@ -80,7 +99,7 @@ class SimpleNN(object):
     def init_config(config):
         if not config:
             raise ValueError("Empty config is not allowed")
-        elif set(SET_UP_KEYS).issubset(config.keys()):
+        elif set(MINIMAL_SET_UP_KEYS).issubset(config.keys()):
             return config
         else:
             print(config)
@@ -112,8 +131,7 @@ class SimpleNN(object):
 
         return params, seed
 
-    @staticmethod
-    def forward_prop(X, Y, params, depth):
+    def forward_prop(self, X, Y, params, depth):
         """
         Compute prediction of the network
         :param X: input
@@ -124,16 +142,24 @@ class SimpleNN(object):
         """
         m = X.shape[1]
         cache = {"A0": X}
-        # here we use n-1 RELU
+        activation_provided= "activation" in self.config.keys()
+        # if AF provided -> N-1 Relu, N sigmoid are used
         for layer in range(1, depth):
             cache["Z"+str(layer)] = (numpy.dot(params["W"+str(layer)],
                                               cache["A"+str(layer-1)])
                                      + params["b"+str(layer)])
-            cache["A"+str(layer)] = numpy.maximum(cache["Z"+str(layer)], 0)
+            print()
+            if activation_provided:
+                activation = self.config["activation"][layer]
+                cache["A"+str(layer)] = activation_function(activation, cache["Z"+str(layer)])
+            else:
+                cache["A"+str(layer)] = numpy.maximum(cache["Z"+str(layer)], 0)
 
-        # last layer is a binary classifier -> sigmoid
         cache["Z"+str(depth)] = numpy.dot(params["W"+str(depth)], cache["A"+str(depth-1)]) + params["b"+str(depth)]
-        cache["A"+str(depth)] = sigmoid(cache["Z"+str(depth)])
+        if activation_provided:
+            cache["A"+str(depth)] = activation_function(self.config["activation"][depth],cache["Z"+str(depth)])
+        else:
+            cache["A"+str(depth)] = sigmoid(cache["Z"+str(depth)])
 
         # compute cost
         if Y is not None:
@@ -279,14 +305,18 @@ class SimpleNN(object):
         # meta information describing the architecture and the training process
         # for now overlaps with the config and some hardcoded info
         # later will be completely replaced with the config
+        if "activation" in self.config.keys():
+            activation = self.config["activation"]
+        else:
+            activation = ["RELU x N-1", "sigmoid"]
         meta = {"seeded":[self.config["seeded"], seed],
                 "architecture": {"arch": self.config["architecture"],
+                                 "AF": activation,
                                  "depth": depth},
                 "results": {"accuracy": accuracy},
                 "training":{"backprop": "GD",
                             "learning_rate": self.config["learning_rate"],
                             "iterations": self.config["iterations"],
-                            "train size":X.shape[1],
-                            "AF":["RELU", "sigmoid"]}
-                     }
+                            "train size":X.shape[1]}
+                }
         return model, meta

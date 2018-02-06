@@ -4,6 +4,11 @@
     "2":4,
     "3":1
   },
+  "activation":{
+    "1":"RELU",
+    "2":"RELU",
+    "3": "sigmoid"
+  },
   "learning_rate": 0.01,
   "iterations": 5000,
   "seeded": true,

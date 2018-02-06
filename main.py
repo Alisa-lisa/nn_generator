@@ -8,13 +8,13 @@ if __name__ == '__main__':
     X_train, Y_train = generator.create_input_structure('examples/training_set.csv')
     X_test, Y_test = generator.create_input_structure('examples/test_set.csv')
 
-    config = config_parser.read_out_config("examples/example_config.yml")
+    config = config_parser.read_out_config("examples/example_config.json")
     nn = SimpleNN(config)
     model, meta = nn.create_and_train_nn(X_train, Y_train)
 
     for k, v in meta.items():
         print(k, v)
-    #
+
     # depth = meta["architecture"]["depth"]
     # predicted = nn.predict(X_test, model, depth, False)
     # predicted2 = nn.predict(X_test, model, depth, True)
