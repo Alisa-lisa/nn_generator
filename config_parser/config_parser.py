@@ -63,10 +63,13 @@ def is_valid_config(config):
         if k == "learning_rate":
             if type(v) != float:
                 is_valid = False
+        if k in ["prediction_confidence", "human_expertise"]:
+            if type(v) != float or (v > 1 or v < 0):
+                is_valid = False
         if k == "iterations":
             if type(v) != int:
                 is_valid = False
-        if k == "seeded" or k == "show_cost":
+        if k in ["seeded", "show_cost", "error_analysis"]:
             if type(v) != bool:
                 is_valid = False
         if k == "seed":

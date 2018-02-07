@@ -238,8 +238,7 @@ class SimpleNN(object):
         else:
             return prediction_prob
 
-    @staticmethod
-    def compute_accuracy(prediction, Y, confidence_level=0.7):
+    def compute_accuracy(self, X, prediction, Y, confidence_level=0.7):
         """
         Computes accuracy for a computed model on a given set
         https://en.wikipedia.org/wiki/Confusion_matrix
@@ -249,7 +248,7 @@ class SimpleNN(object):
         """
         res = []
         for i in range(0,prediction.shape[1]):
-            if prediction[0][i] > 0.7:
+            if prediction[0][i] > confidence_level:
                 res.append(1)
             else:
                 res.append(0)
@@ -259,16 +258,20 @@ class SimpleNN(object):
 
         FN = 0
         TP = 0
+        errors = {}
         for i in range(0, prediction.shape[1]):
             if res[0][i] == 0 and Y[0][i] == res[0][i]:
                 FN += 1
             elif res[0][i] == 1 and Y[0][i] == res[0][i]:
                 TP += 1
             else:
-                pass
+                if ("error_analysis" in self.config.keys()
+                    and self.config["error_analysis"]):
+                    errors[i] = {"detected":[res[0][i],
+                                             X[:, i]], "actual": Y[0][i]}
         accuracy = (FN + TP) / Y.shape[1]
 
-        return accuracy
+        return accuracy, errors
 
     def create_and_train_nn(self, X, Y):
         """ Simple numpy implementation of a shallow NN training process:
@@ -305,8 +308,7 @@ class SimpleNN(object):
             self.update_params(params, gradients,
                                self.config["learning_rate"], depth)
 
-        accuracy = self.compute_accuracy(cache["A"+str(depth)], Y)
-
+        accuracy, errors = self.compute_accuracy(X, cache["A"+str(depth)], Y)
         if "show_cost" in self.config.keys() and self.config["show_cost"]:
             simple_cost_plot([i for i in range(0, self.config["iterations"])],
                              cost_dev, "cost function", "iterations numbers",
@@ -325,9 +327,38 @@ class SimpleNN(object):
                                  "AF": activation,
                                  "depth": depth},
                 "results": {"accuracy": accuracy},
-                "training":{"learning algo": "GD",
-                            "learning_rate": self.config["learning_rate"],
-                            "iterations": self.config["iterations"],
-                            "train size": X.shape[1]}
+                "training": {"learning algo": "GD",
+                             "learning_rate": self.config["learning_rate"],
+                             "iterations": self.config["iterations"],
+                             "train size": X.shape[1]},
+                "errors": errors
                 }
         return model, meta
+
+    def simple_analysis(self, accuracy_train, accuracy_test):
+        """
+        Gives a basic advice what can be done to improve the model
+        :param accuracy_train: float showing accuracy of the model on a train set
+        :param accuracy_test: float showing accuracy of the model on a test set
+        :return: None, prints out some suggestions
+        """
+        if set(["human_expertise", "error_analysis"]).issubset(self.config.keys()):
+            if self.config["human_expertise"] <= accuracy_train:
+                print("You have surpassed human expertise level. "
+                             "Most approaches won't be as effective as they used to. "
+                             "Try more data with possibly different distribution maybe")
+            else:
+                avoidable_bias = self.config["human_expertise"] - accuracy_train
+                variance = accuracy_train - accuracy_test
+                if avoidable_bias > variance:
+                    print("Seems like bias is a bigger problem than the variance.\n"
+                                 "Try:\n"
+                                 "1. adding new features to the input\n"
+                                 "2. increasing size of the network (either units or architecture)\n"
+                                 "3. different learning algorithm.")
+                else:
+                    print("Seems like variance is a bigger problem now.\n"
+                                 "Try: \n"
+                                 "1. increasing amount of training data\n"
+                                 "2. adding regularization\n"
+                                 "3. changing architecture to slimmer one.")

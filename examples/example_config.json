@@ -9,9 +9,12 @@
     "2":"relu",
     "3": "sigmoid"
   },
+  "prediction_confidence": 0.7,
   "learning_rate": 0.01,
   "iterations": 5000,
-  "show_cost": false,
   "seeded": true,
-  "seed": 345
+  "seed": 345,
+  "error_analysis":true,
+  "show_cost": false,
+  "human_expertise":0.99
 }

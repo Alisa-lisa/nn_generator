@@ -19,12 +19,13 @@ if __name__ == '__main__':
     depth = meta["architecture"]["depth"]
     predicted = nn.predict(X_test, model, depth, False)
     predicted2 = nn.predict(X_test, model, depth, True)
-    accuracy_test = nn.compute_accuracy(predicted, Y_test)
+    accuracy_test, errors = nn.compute_accuracy(X_test, predicted, Y_test)
     print("test accuracy is: {}".format(accuracy_test))
 
-    simple_plot_predictions(t_test,
-                            predicted2.T, Y_test[0],
-                            "state", "time",
-                            True, "examples/3_layer_nn.png")
+    # simple_plot_predictions(t_test,
+    #                         predicted2.T, Y_test[0],
+    #                         "state", "time",
+    #                         True, "examples/3_layer_nn.png")
     # needed for matplotlib to keep plots opened
-    plt.show()
+    # plt.show()
+    nn.simple_analysis(meta["results"]["accuracy"], accuracy_test)
