@@ -72,7 +72,7 @@ configuration file can have:
     - "activation":dict
     - "show_cost":bool
 activation key must have the same structure as the architecture but with AF names in values
-
+example configuration can be found in the examples folder
 
 Current limitations (wip):
 1. Only Gradient Descent is available

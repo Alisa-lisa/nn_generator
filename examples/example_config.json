@@ -5,13 +5,13 @@
     "3":1
   },
   "activation":{
-    "1":"RELU",
-    "2":"RELU",
+    "1":"relu",
+    "2":"relu",
     "3": "sigmoid"
   },
   "learning_rate": 0.01,
   "iterations": 5000,
-  "show_cost": true,
+  "show_cost": false,
   "seeded": true,
   "seed": 345
 }

@@ -9,8 +9,8 @@ from visualization.simple_plot import simple_cost_plot
 # If you need numpy warnings comment out this line
 numpy.warnings.filterwarnings('ignore')
 
-MINIMAL_SET_UP_KEYS = ["architecture", "learning_rate", "iterations",
-                       "seeded", "seed"]
+MUST_KEYS = ["architecture", "learning_rate", "iterations", "seeded", "seed"]
+MIGHT_KEYS = ["activation", "show_cost"]
 
 def create_input_structure(filename):
     """
@@ -103,7 +103,7 @@ class SimpleNN(object):
     def init_config(config):
         if not config:
             raise ValueError("Empty config is not allowed")
-        elif set(MINIMAL_SET_UP_KEYS).issubset(config.keys()):
+        elif set(MUST_KEYS).issubset(config.keys()):
             return config
         else:
             print(config)

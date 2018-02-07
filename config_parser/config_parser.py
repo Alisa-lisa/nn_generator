@@ -1,6 +1,8 @@
-from model_generator.simple_nn import MINIMAL_SET_UP_KEYS
+from model_generator.simple_nn import MUST_KEYS, MIGHT_KEYS
 import json
 import yaml
+import logging
+
 
 def read_out_json_config(config_name):
     """ As you could guess, reads config from file"""
@@ -8,7 +10,7 @@ def read_out_json_config(config_name):
         try:
             res = {}
             config_raw = json.load(config)
-            if not set(MINIMAL_SET_UP_KEYS).issubset(config_raw.keys()):
+            if not set(MUST_KEYS).issubset(config_raw.keys()):
                 raise ValueError("Configuration is incomplete")
             else:
                 for k, v in config_raw.items():
@@ -31,24 +33,75 @@ def read_out_yaml_config(config_name):
     with open(config_name, 'r') as config:
         try:
             config_raw = yaml.load(config)
-            if not set(MINIMAL_SET_UP_KEYS).issubset(config_raw.keys()):
+            if not set(MUST_KEYS).issubset(config_raw.keys()):
                 raise ValueError("Configuration is incomplete")
             else:
                 return config_raw
         except ValueError:
             raise ValueError("Could not read the config file")
 
+
+def is_valid_config(config):
+    """
+    Checks that all must-keys and their must-values are fine
+    also checks might keys and their values
+    all "non-registered" keys are ignored
+    :param config: dict containigng desired keys and values
+    :return: bool
+    """
+    is_valid = True
+    for k, v in config.items():
+        if k == "architecture":
+            if type(v) != dict:
+                is_valid = False
+            elif sorted(config[k].keys()) != [i for i in range(1,len(config[k].keys())+1)]:
+                is_valid = False
+            else:
+                for k1, v1 in v.items():
+                    if type(k1) != int or type(v1) != int:
+                        is_valid = False
+        if k == "learning_rate":
+            if type(v) != float:
+                is_valid = False
+        if k == "iterations":
+            if type(v) != int:
+                is_valid = False
+        if k == "seeded" or k == "show_cost":
+            if type(v) != bool:
+                is_valid = False
+        if k == "seed":
+            if type(v) != int:
+                is_valid = False
+        if k == "activation":
+            if type(v) != dict:
+                is_valid = False
+            elif not set(["relu", "sigmoid"]).issubset(v.values()):
+                is_valid = False
+        if not is_valid:
+            logging.warning("Unexpected data type for the key {}".format(k))
+            return False
+    return True
+
+
 def read_out_config(config_name):
     """ Wrapper for both YAML and JSON formats """
     extension = config_name.split(".")[-1]
     if extension == "json":
         try:
-            return read_out_json_config(config_name)
+            conf = read_out_json_config(config_name)
+            if is_valid_config(conf):
+                return conf
+            else:
+                raise ValueError("Inappropriate config provided")
         except ValueError:
             raise ValueError("Inappropriate config provided")
     elif extension in ["yml", "yaml"]:
         try:
-            return read_out_yaml_config(config_name)
+            conf = read_out_yaml_config(config_name)
+            if is_valid_config(conf):
+                return conf
+            else:
+                raise ValueError("Inappropriate config provided")
         except ValueError:
             raise ValueError("Inappropriate config provided")
     else:
