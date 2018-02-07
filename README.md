@@ -30,6 +30,10 @@ if __name__ == '__main__':
     # needed for matplotlib to keep plots opened
     plt.show()
 
+    # if "error_analysis" is set to true and "human_expertise" is provided in the config
+    # very basic analysis with hints is available
+    nn.simple_analysis(meta["results"]["accuracy"], accuracy_test)
+
 ```
 The data in the example describes a cyclic behaviour over a certain time.
 In order to build a model best capturing these time patterns there are 3 questions
@@ -71,6 +75,8 @@ to the config file, otherwise the plot will not be created
 configuration file can have:
     - "activation":dict
     - "show_cost":bool
+    - "error_analysis":bool
+    - "human_expertise":float within [0,1]
 activation key must have the same structure as the architecture but with AF names in values
 example configuration can be found in the examples folder
 
