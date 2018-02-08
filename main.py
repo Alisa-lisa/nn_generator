@@ -12,6 +12,9 @@ if __name__ == '__main__':
     config = config_parser.read_out_config("examples/example_config.json")
     nn = SimpleNN(config)
     model, meta = nn.create_and_train_nn(X_train, Y_train)
+    # if proper starter weights are provided:
+    # starter_weights = {...}
+    # model, meta = nn.create_and_train_nn(X_train, Y_train, starter_weights)
 
     for k, v in meta.items():
         print(k, v)

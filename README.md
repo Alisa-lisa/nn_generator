@@ -16,6 +16,9 @@ if __name__ == '__main__':
     config = config_parser.read_out_config("examples/example_config.json")
     nn = SimpleNN(config)
     model, meta = nn.create_and_train_nn(X_train, Y_train)
+    # if proper starter weights are provided:
+    # starter_weights = {...}
+    # model, meta = nn.create_and_train_nn(X_train, Y_train, starter_weights)
 
     depth = meta["architecture"]["depth"]
     predicted = nn.predict(X_test, model, depth, False)
@@ -77,7 +80,8 @@ configuration file can have:
     - "show_cost":bool
     - "error_analysis":bool
     - "human_expertise":float within [0,1]
-activation key must have the same structure as the architecture but with AF names in values
+    - "init_random":bool
+"activation" key must have the same structure as the architecture but with AF names in values
 example configuration can be found in the examples folder
 
 Current limitations (wip):

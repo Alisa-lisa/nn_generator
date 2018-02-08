@@ -69,7 +69,7 @@ def is_valid_config(config):
         if k == "iterations":
             if type(v) != int:
                 is_valid = False
-        if k in ["seeded", "show_cost", "error_analysis"]:
+        if k in ["seeded", "show_cost", "error_analysis", "init_random"]:
             if type(v) != bool:
                 is_valid = False
         if k == "seed":

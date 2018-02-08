@@ -16,7 +16,7 @@ def create_input_structure(filename):
     """
     Reads out the data from the original file
     create proper feature vector
-    shape should be (features, num_examples)
+    shape should be (num_features, num_examples)
 
     :param filename: file containing the data
 
@@ -109,9 +109,7 @@ class SimpleNN(object):
             print(config)
             raise ValueError("The config is not complete")
 
-
-    @staticmethod
-    def _init_params(X, Y, hidden_units, seeded=False, seed=345):
+    def init_params(self, X, Y):
         """
         The architecture is fixed
         :param X: input
@@ -121,19 +119,21 @@ class SimpleNN(object):
         """
         m = X.shape[0]
 
-        if seeded:
-            numpy.random.seed(seed)
+        if "seeded" in self.config.keys() and self.config["seeded"]:
+            numpy.random.seed(self.config["seed"])
 
         params = {}
-        for layer in list(hidden_units.keys()):
+        for layer in list(self.config["architecture"].keys()):
             # special treatment for the first layer init
             if layer > 1:
-                m = hidden_units[layer-1]
-            params["W"+str(layer)] = numpy.random.rand(hidden_units[layer], m)
-            params["b"+str(layer)] = numpy.zeros((hidden_units[layer], 1))
+                m = self.config["architecture"][layer-1]
+            params["W"+str(layer)] = numpy.random.rand(
+                self.config["architecture"][layer], m)
+            params["b"+str(layer)] = numpy.zeros((
+                self.config["architecture"][layer], 1))
 
 
-        return params, seed
+        return params
 
     def forward_prop(self, X, Y, params, depth):
         """
@@ -146,7 +146,7 @@ class SimpleNN(object):
         """
         m = X.shape[1]
         cache = {"A0": X}
-        activation_provided= "activation" in self.config.keys()
+        activation_provided = "activation" in self.config.keys()
         # if AF provided -> N-1 Relu, N sigmoid are used
         for layer in range(1, depth):
             cache["Z"+str(layer)] = (numpy.dot(params["W"+str(layer)],
@@ -273,7 +273,7 @@ class SimpleNN(object):
 
         return accuracy, errors
 
-    def create_and_train_nn(self, X, Y):
+    def create_and_train_nn(self, X, Y, init_weights=None):
         """ Simple numpy implementation of a shallow NN training process:
          1. initialize parameters
          2. forward prop
@@ -293,9 +293,16 @@ class SimpleNN(object):
          """
         # init params
         depth = len(self.config["architecture"].keys())
-        params, seed = self._init_params(X, Y, self.config["architecture"],
-                                         self.config["seeded"],
-                                         self.config["seed"])
+        if "init_random" in self.config.keys() and not self.config["init_random"]:
+            if init_weights != None: # add proper dims safeguard
+                params = init_weights
+            else:
+                logging.warning("Different starter weights option was enabled, "
+                                "but no proper parameters were provided."
+                                "Fallback - random initialization")
+                params = self.init_params(X, Y)
+        else:
+            params = self.init_params(X, Y)
         cache = ()
         cost_dev = []
         for i in range(0, self.config["iterations"]):
@@ -322,7 +329,7 @@ class SimpleNN(object):
             activation = self.config["activation"]
         else:
             activation = ["RELU x N-1", "sigmoid"]
-        meta = {"seeded":[self.config["seeded"], seed],
+        meta = {"seeded":[self.config["seeded"], self.config["seed"]],
                 "architecture": {"arch": self.config["architecture"],
                                  "AF": activation,
                                  "depth": depth},
