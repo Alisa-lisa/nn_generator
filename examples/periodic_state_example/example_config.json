@@ -13,9 +13,10 @@
   "prediction_confidence": 0.7,
   "learning_rate": 0.01,
   "iterations": 5000,
+  "regularization":0.0,
   "seeded": true,
   "seed": 345,
-  "error_analysis":true,
+  "error_analysis":false,
   "show_cost": false,
   "human_expertise":0.99
 }

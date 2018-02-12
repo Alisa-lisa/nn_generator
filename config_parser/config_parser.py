@@ -60,7 +60,7 @@ def is_valid_config(config):
                 for k1, v1 in v.items():
                     if type(k1) != int or type(v1) != int:
                         is_valid = False
-        if k == "learning_rate":
+        if k in ["learning_rate", "regularization"]:
             if type(v) != float:
                 is_valid = False
         if k in ["prediction_confidence", "human_expertise"]:

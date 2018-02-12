@@ -81,6 +81,7 @@ configuration file can have:
     - "error_analysis":bool
     - "human_expertise":float within [0,1]
     - "init_random":bool
+    - "regularization":float (l2 regularization)
 "activation" key must have the same structure as the architecture but with AF names in values
 example configuration can be found in the examples folder
 

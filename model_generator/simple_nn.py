@@ -82,7 +82,7 @@ def read_out_model(filename):
     :param filename: path to teh stored model
     :return: dict with params and dict with training details
     """
-    with open("{}.json".format(filename), "r") as input_model:
+    with open("{}".format(filename), "r") as input_model:
         try:
             model_and_meta = json.load(input_model)
             model = {}
@@ -148,6 +148,8 @@ class SimpleNN(object):
         cache = {"A0": X}
         activation_provided = "activation" in self.config.keys()
         # if AF provided -> N-1 Relu, N sigmoid are used
+        reg_sum = 0
+
         for layer in range(1, depth):
             cache["Z"+str(layer)] = (numpy.dot(params["W"+str(layer)],
                                               cache["A"+str(layer-1)])
@@ -158,6 +160,9 @@ class SimpleNN(object):
                                                             cache["Z"+str(layer)])
             else:
                 cache["A"+str(layer)] = numpy.maximum(cache["Z"+str(layer)], 0)
+
+            if "regularization" in self.config.keys():
+                reg_sum += numpy.sum(numpy.square(params["W"+str(layer)]))
 
         cache["Z"+str(depth)] = numpy.dot(params["W"+str(depth)],
                                           cache["A"+str(depth-1)]) + params["b"+str(depth)]
@@ -171,7 +176,8 @@ class SimpleNN(object):
         if Y is not None:
             log1 = numpy.multiply(numpy.log(cache["A"+str(depth)]), Y)
             log2 = numpy.multiply(numpy.log(1 - cache["A"+str(depth)]), 1 - Y)
-            cost = (-1 * numpy.sum(log1 + log2)) / m
+            regularization = (self.config["regularization"] * reg_sum) / 2
+            cost = (-1 * numpy.sum(log1 + log2) + regularization) / m
         else:
             cost = 0
         return cost, cache

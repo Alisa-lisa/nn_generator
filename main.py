@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     # data preparation -> feature extraction, normalization, etc.
-    t, X_train, Y_train = generator.create_input_structure('examples/training_set.csv')
-    t_test, X_test, Y_test = generator.create_input_structure('examples/test_set.csv')
+    t, X_train, Y_train = generator.create_input_structure('examples/periodic_state_example/training_set.csv')
+    t_test, X_test, Y_test = generator.create_input_structure('examples/periodic_state_example/test_set.csv')
 
-    config = config_parser.read_out_config("examples/example_config.json")
+    config = config_parser.read_out_config("examples/periodic_state_example/example_config.json")
     nn = SimpleNN(config)
     model, meta = nn.create_and_train_nn(X_train, Y_train)
     # if proper starter weights are provided:
@@ -28,7 +28,7 @@ if __name__ == '__main__':
     simple_plot_predictions(t_test,
                             predicted2.T, Y_test[0],
                             "state", "time",
-                            True, "examples/3_layer_nn.png")
+                            False, "examples/periodic_state_example/best_data_deep.png")
     # needed for matplotlib to keep plots opened
-    plt.show()
-    nn.simple_analysis(meta["results"]["accuracy"], accuracy_test)
+    # plt.show()
+    # nn.simple_analysis(meta["results"]["accuracy"], accuracy_test)

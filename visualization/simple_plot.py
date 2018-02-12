@@ -36,7 +36,7 @@ def simple_plot_predictions(timestamps, A, B, state, time, save=False,
     blue = mpatches.Patch(color='blue', label='predicted value')
     plt.legend(handles=[red, blue], bbox_to_anchor=(0., 1.02, 1., .102),
                loc=3, ncol=2, mode="expand", borderaxespad=0.)
-
+    plt.tight_layout()
     plt.draw()
     plt.show(block=False)
     if save:
