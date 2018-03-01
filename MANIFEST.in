@@ -1,0 +1,4 @@
+include README.rst
+include nn_generator/examples/*.json
+include nn_generator/examples/*.yml
+include nn_generator/examples/*.csv

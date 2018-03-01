@@ -1,7 +1,9 @@
-from model_generator.simple_nn import MUST_KEYS, MIGHT_KEYS
 import json
-import yaml
 import logging
+
+import yaml
+
+from nn_generator.model_generator.simple_nn import MUST_KEYS
 
 
 def read_out_json_config(config_name):
@@ -17,16 +19,17 @@ def read_out_json_config(config_name):
                     if k == "architecture":
                         res[k] = {}
                         for k1, v1 in v.items():
-                            res[k].update({int(k1):int(v1)})
+                            res[k].update({int(k1): int(v1)})
                     elif k == "activation":
                         res[k] = {}
                         for k1, v1 in v.items():
-                            res[k].update({int(k1):str(v1)})
+                            res[k].update({int(k1): str(v1)})
                     else:
                         res[k] = v
                 return res
         except ValueError:
             raise ValueError("Could not read the config file")
+
 
 def read_out_yaml_config(config_name):
     """ Aaaand again, just reading out the  config"""
@@ -52,9 +55,10 @@ def is_valid_config(config):
     is_valid = True
     for k, v in config.items():
         if k == "architecture":
+            keys = [i for i in range(1, len(config[k].keys()) + 1)]
             if type(v) != dict:
                 is_valid = False
-            elif sorted(config[k].keys()) != [i for i in range(1,len(config[k].keys())+1)]:
+            elif sorted(config[k].keys()) != keys:
                 is_valid = False
             else:
                 for k1, v1 in v.items():
@@ -109,6 +113,3 @@ def read_out_config(config_name):
             raise ValueError("Inappropriate config provided")
     else:
         raise ValueError("Unknown config file extension")
-
-
-

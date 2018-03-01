@@ -2,15 +2,16 @@ import numpy
 import datetime
 import logging
 
-DAYS_NUMERATION = {1:"Monday", 2:"Tuesday", 3:"Wednesday", 4:"Thursday",
-                   5:"Friday", 6:"Saturday", 7:"Sunday"}
-SEASONS = {1:"Winter", 2:"Spring", 3:"Summer", 4:"Autumn"}
-UNIVERSITY_CYCLE = {1:"Lectures", 2:"Session", 3:"Vacation"}
+DAYS_NUMERATION = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday",
+                   5: "Friday", 6: "Saturday", 7: "Sunday"}
+SEASONS = {1: "Winter", 2: "Spring", 3: "Summer", 4: "Autumn"}
+UNIVERSITY_CYCLE = {1: "Lectures", 2: "Session", 3: "Vacation"}
+
 
 def university_phase(date):
     """
     Hardcoded information according to:
-https://www.jura.uni-hamburg.de/en/service/termine.html
+    https://www.jura.uni-hamburg.de/en/service/termine.html
     the website is not parsed
     :param timestamp: datetime.timestamp
     :return: int according to UNIVERSITY_CYCLE
@@ -27,8 +28,8 @@ https://www.jura.uni-hamburg.de/en/service/termine.html
     sss = datetime.date(2016, 7, 17)
     sse = datetime.date(2016, 8, 17)
     # real term break 1
-    stbs = datetime.date(2016, 8, 18)
-    stbe = datetime.date(2016, 10, 14)
+    # stbs = datetime.date(2016, 8, 18)
+    # stbe = datetime.date(2016, 10, 14)
     # winter
     wls = datetime.date(2016, 10, 15)
     wle = datetime.date(2016, 2, 4)
@@ -39,8 +40,8 @@ https://www.jura.uni-hamburg.de/en/service/termine.html
     wss = datetime.date(2016, 2, 5)
     wse = datetime.date(2016, 3, 5)
     # real term break 2
-    wtbs = datetime.date(2016, 3, 6)
-    wtbe = datetime.date(2016, 4, 3)
+    # wtbs = datetime.date(2016, 3, 6)
+    # wtbe = datetime.date(2016, 4, 3)
 
     # is in lectures
     summer_lectures = ((sls <= transformed and transformed <= sle)
@@ -66,17 +67,18 @@ def get_season(month):
     :param month: int 1-12
     :return: int 0-4
     """
-    if month in [1,2,12]:
+    if month in [1, 2, 12]:
         return 1
-    elif month in [3,4,5]:
+    elif month in [3, 4, 5]:
         return 2
-    elif month in [6,7,8]:
+    elif month in [6, 7, 8]:
         return 3
     elif month in [9, 10, 11]:
         return 4
     else:
         logging.error("Wrong month given, should be 1-12")
         return 0
+
 
 def extract_features(timestamp):
     """ Unpacks the features of a given timestamp
@@ -88,7 +90,7 @@ def extract_features(timestamp):
     """
     datetime_obj = datetime.datetime.fromtimestamp(float(timestamp))
     day_of_the_week = datetime_obj.isoweekday()
-    time_of_the_day = datetime_obj.hour #  TODO: set hour to range [1,24]
+    time_of_the_day = datetime_obj.hour  # TODO: set hour to range [1,24]
     season = get_season(datetime_obj.month)
     uni_phase = university_phase(datetime_obj)
 

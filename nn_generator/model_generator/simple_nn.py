@@ -1,16 +1,19 @@
-import math
-import numpy
 import csv
 import json
 import logging
-import preprocessing.example_preprocessor as process
-from visualization.simple_plot import simple_cost_plot
+import math
+
+import numpy
+
+from nn_generator.preprocessing import example_preprocessor as process
+from nn_generator.visualization.simple_plot import simple_cost_plot
 
 # If you need numpy warnings comment out this line
 numpy.warnings.filterwarnings('ignore')
 
 MUST_KEYS = ["architecture", "learning_rate", "iterations", "seeded", "seed"]
 MIGHT_KEYS = ["activation", "show_cost"]
+
 
 def create_input_structure(filename):
     """
@@ -39,7 +42,7 @@ def create_input_structure(filename):
 
 
 def sigmoid(x):
-   return 1 / (1 + numpy.exp(-x))
+    return 1 / (1 + numpy.exp(-x))
 
 
 def relu(x):
@@ -60,6 +63,7 @@ def activation_function(activation_name, X):
         raise NameError("No AF with the name {} "
                         "is allowed".format(activation_name))
 
+
 def save_model(filename, model_dict, meta):
     """
     Saves examples weights and additional information about training
@@ -73,7 +77,7 @@ def save_model(filename, model_dict, meta):
         model[k] = v.tolist()
 
     with open("{}.json".format(filename), 'w') as model_file:
-        json.dump({"model":model, "meta":meta}, model_file)
+        json.dump({"model": model, "meta": meta}, model_file)
 
 
 def read_out_model(filename):
@@ -132,7 +136,6 @@ class SimpleNN(object):
             params["b"+str(layer)] = numpy.zeros((
                 self.config["architecture"][layer], 1))
 
-
         return params
 
     def forward_prop(self, X, Y, params, depth):
@@ -152,7 +155,7 @@ class SimpleNN(object):
 
         for layer in range(1, depth):
             cache["Z"+str(layer)] = (numpy.dot(params["W"+str(layer)],
-                                              cache["A"+str(layer-1)])
+                                               cache["A"+str(layer-1)])
                                      + params["b"+str(layer)])
             if activation_provided:
                 activation = self.config["activation"][layer]
@@ -195,7 +198,7 @@ class SimpleNN(object):
         grads = {"dZ{}".format(depth): cache["A" + str(depth)] - Y}
         grads["A0"] = X
 
-        for i in list(reversed(range(1,depth+1))):
+        for i in list(reversed(range(1, depth+1))):
             if i < depth:
                 grads["dA"+str(i)] = numpy.dot(params["W" + str(i + 1)].T,
                                                grads["dZ" + str(i + 1)])
@@ -205,7 +208,6 @@ class SimpleNN(object):
                                                     cache["A" + str(i - 1)].T)
             grads["db"+str(i)] = 1. / m * numpy.sum(grads["dZ"+str(i)],
                                                     axis=1, keepdims=True)
-
 
         return grads
 
@@ -235,7 +237,7 @@ class SimpleNN(object):
 
         if convert:
             res = []
-            for i in range(0,prediction_prob.shape[1]):
+            for i in range(0, prediction_prob.shape[1]):
                 if prediction_prob[0][i] > confidence_level:
                     res.append(1)
                 else:
@@ -253,7 +255,7 @@ class SimpleNN(object):
         :return: (float) accuracy
         """
         res = []
-        for i in range(0,prediction.shape[1]):
+        for i in range(0, prediction.shape[1]):
             if prediction[0][i] > confidence_level:
                 res.append(1)
             else:
@@ -273,8 +275,9 @@ class SimpleNN(object):
             else:
                 if ("error_analysis" in self.config.keys()
                     and self.config["error_analysis"]):
-                    errors[i] = {"detected":[res[0][i],
-                                             X[:, i]], "actual": Y[0][i]}
+                    errors[i] = {"detected": [res[0][i],
+                                              X[:, i]],
+                                 "actual": Y[0][i]}
         accuracy = (FN + TP) / Y.shape[1]
 
         return accuracy, errors
@@ -297,10 +300,9 @@ class SimpleNN(object):
 
          :return: dict model parameters, meta information
          """
-        # init params
         depth = len(self.config["architecture"].keys())
         if "init_random" in self.config.keys() and not self.config["init_random"]:
-            if init_weights != None: # add proper dims safeguard
+            if init_weights is not None:
                 params = init_weights
             else:
                 logging.warning("Different starter weights option was enabled, "
@@ -335,7 +337,7 @@ class SimpleNN(object):
             activation = self.config["activation"]
         else:
             activation = ["RELU x N-1", "sigmoid"]
-        meta = {"seeded":[self.config["seeded"], self.config["seed"]],
+        meta = {"seeded": [self.config["seeded"], self.config["seed"]],
                 "architecture": {"arch": self.config["architecture"],
                                  "AF": activation,
                                  "depth": depth},

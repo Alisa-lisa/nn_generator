@@ -17,7 +17,6 @@ def simple_plot_predictions(timestamps, A, B, state, time, save=False,
     :param name: path where to save the plot
     :return: None, show plot
     """
-
     t = [datetime.fromtimestamp(float(i)) for i in timestamps]
     fig, ax = plt.subplots(1)
     fig.autofmt_xdate()
@@ -28,7 +27,7 @@ def simple_plot_predictions(timestamps, A, B, state, time, save=False,
     ax.xaxis.set_major_formatter(xfmt)
 
     plt.ylabel(state)
-    plt.yticks([0,1])
+    plt.yticks([0, 1])
     plt.xlabel(time)
     plt.xticks(rotation=90)
 
@@ -41,7 +40,6 @@ def simple_plot_predictions(timestamps, A, B, state, time, save=False,
     plt.show(block=False)
     if save:
         plt.savefig(name)
-
 
 
 def simple_cost_plot(iterations, cost, y_name, x_name, save=False,
@@ -65,7 +63,6 @@ def simple_cost_plot(iterations, cost, y_name, x_name, save=False,
                loc=3, ncol=2, mode="expand", borderaxespad=0.)
     if save:
         plt.savefig(name)
-
 
     plt.draw()
     plt.show(block=False)
