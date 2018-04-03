@@ -3,6 +3,7 @@ nn_generator
 package is designed for a rapid prototyping or toying around with a fully connected network (FC NN)
 
 .. code-block:: python
+
     >>> pip install nn_generator
 
 1. Example usage using data provided in the examples folder
