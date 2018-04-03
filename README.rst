@@ -10,12 +10,12 @@ package is designed for a rapid prototyping or toying around with a fully connec
     >>> from nn_generator.config_parser import config_parser
     >>> from nn_generator.model_generator.simple_nn import SimpleNN
     >>> from nn_generator.visualization.simple_plot import simple_plot_predictions
-    >>> # Make sure that the inout is a numpy.array with X_dimensions = ()
-    >>> # and Y_dimensions = ()
+    >>> # Make sure that the inout is a numpy.array with X_dimensions = (features,dataset_size)
+    >>> # and Y_dimensions = (class, dataset_size)
     >>> t, X_train, Y_train = custom_create_input_structure('path_to_raw_training_set.csv')
     >>> t_test, X_test, Y_test = custom_create_input_structure('path_to_raw_testing_set.csv')
     >>>
-    >>> config = config_parser.read_out_config("nn_generator/examples/periodic_state_example/example_config.json")
+    >>> config = config_parser.read_out_config("path_to_your_config.json")
     >>> nn = SimpleNN(config)
     >>> # Training step
     >>> model, meta = nn.create_and_train_nn(X_train, Y_train)

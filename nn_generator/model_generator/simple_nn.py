@@ -1,11 +1,8 @@
-import csv
 import json
 import logging
-import math
 
 import numpy
 
-from nn_generator.preprocessing import example_preprocessor as process
 from nn_generator.visualization.simple_plot import simple_cost_plot
 
 # If you need numpy warnings comment out this line
@@ -13,32 +10,6 @@ numpy.warnings.filterwarnings('ignore')
 
 MUST_KEYS = ["architecture", "learning_rate", "iterations", "seeded", "seed"]
 MIGHT_KEYS = ["activation", "show_cost"]
-
-
-def create_input_structure(filename):
-    """
-    Reads out the data from the original file
-    create proper feature vector
-    shape should be (num_features, num_examples)
-
-    :param filename: file containing the data
-
-    returns: X - numpy.array containing the features,
-             Y - numpy vector containing the actual stand
-    """
-    X = []
-    Y = []
-    with open(filename, 'r') as raw_data:
-        # skip header
-        next(raw_data)
-        reader = csv.reader(raw_data, delimiter=',')
-        timestamps = []
-        for row in reader:
-            timestamps.append(row[0])
-            X.append(process.extract_features(row[0]))
-            Y.append(math.floor(float(row[1])))
-
-    return timestamps, numpy.array(X).T, numpy.array([Y])
 
 
 def sigmoid(x):

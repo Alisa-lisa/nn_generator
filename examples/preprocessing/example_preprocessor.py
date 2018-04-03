@@ -1,6 +1,8 @@
 import numpy
 import datetime
 import logging
+import csv
+import math
 
 DAYS_NUMERATION = {1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday",
                    5: "Friday", 6: "Saturday", 7: "Sunday"}
@@ -96,3 +98,29 @@ def extract_features(timestamp):
 
     return numpy.array([day_of_the_week, time_of_the_day,
                         season, uni_phase])
+
+
+def create_input_structure(filename):
+    """
+    Reads out the data from the original file
+    create proper feature vector
+    shape should be (num_features, num_examples)
+
+    :param filename: file containing the data
+
+    returns: X - numpy.array containing the features,
+             Y - numpy vector containing the actual stand
+    """
+    X = []
+    Y = []
+    with open(filename, 'r') as raw_data:
+        # skip header
+        next(raw_data)
+        reader = csv.reader(raw_data, delimiter=',')
+        timestamps = []
+        for row in reader:
+            timestamps.append(row[0])
+            X.append(extract_features(row[0]))
+            Y.append(math.floor(float(row[1])))
+
+    return timestamps, numpy.array(X).T, numpy.array([Y])
