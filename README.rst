@@ -72,41 +72,56 @@ package is designed for a rapid prototyping or toying around with a fully connec
 3. Configuration file:
 ----------------------
 Must have keys:
-    - "architecture" (dict): The last layer is the output should always be present and have 1 as the value.
+    - "architecture" (dict): 
+                             The last layer is the output should always be present and have 1 as the value.
                              Keys are the number of the layer, make sure there are no missing layers.
                              Values are integers for the amount of units in the layer.
 
-    - "learning_rate" (float): A hyperparameter to provide for the Gradient Descent learning algorithm.
+    - "learning_rate" (float): 
+                               A hyperparameter to provide for the Gradient Descent learning algorithm.
                                If the value is to big the GD might explode. If the value is too small the learning process
                                might take ages. Anything between 0.2 and 0.01 is considered to be a good start.
 
-    - "iterations" (int): Also known as "epochs". The number of times the algorithm is being retrained. Very big number will slow down the learning
+    - "iterations" (int): 
+                          Also known as "epochs". The number of times the algorithm is being retrained. Very big number will slow down the learning
                           plus it might be not a very efficient hyperparameter to tune.
                           Very small number of iterations will result in less optimal results.
 
-    - "seeded" (bool): In order for the results to be replicable this option should be used. If set to true the seed will be considered.
+    - "seeded" (bool): 
+                       In order for the results to be replicable this option should be used. If set to true the seed will be considered.
                        Otherwise the learning will happen with a random initialization every time the training function is called.
-    - "seed" (int): If "seeded" is enabled an optimal seed should be fixed for replicable results.
+
+    - "seed" (int): 
+                    If "seeded" is enabled an optimal seed should be fixed for replicable results.
 
 Might have keys:
-    - "activation" (dict): If provided the structure should be the same as in for the "architecture" key.
+    - "activation" (dict): 
+                           If provided the structure should be the same as in for the "architecture" key.
                            The key is the number of the layer. The value is the string-name of the activation function.
                            Available functions are: "sigmoid", "relu".
 
-    - "show_cost" (bool): If set to true will plot the cost for each iterations thus showing how the learning was going.
+    - "show_cost" (bool): 
+                           If set to true will plot the cost for each iterations thus showing how the learning was going.
 
-    - "error_analysis" (bool): If set to true, the falsely detected classes and corresponding input vectors are collected for later error analysis.
+    - "error_analysis" (bool): 
+                           If set to true, the falsely detected classes and corresponding input vectors are collected for later error analysis.
 
-    - "human_expertise" (float): If set somewhere between 0 and 1 (closer to 1 is probably a good idea)
+    - "human_expertise" (float): 
+                                 If set somewhere between 0 and 1 (closer to 1 is probably a good idea)
                                  will be used for bias/variance detection within the error analysis. Human expertise can be seen as the desired accuracy for the model.
 
-    - "regularization" (float): Some float used in L2-norm regularizetion to penalize the model for overfitting (using too many features).
+    - "regularization" (float): 
+                                Some float used in L2-norm regularizetion to penalize the model for overfitting (using too many features).
 
-    - "prediction_confidence" (float): The output probability of the data to be assigned a class is compared to this theshold. Default is 0.7
+    - "prediction_confidence" (float): 
+                                       The output probability of the data to be assigned a class is compared to this theshold. Default is 0.7
 
-    - "init_random" (bool): I snot implemented yet. Is planned to be used for custom weights initialization.
+    - "init_random" (bool):
+                            Not implemented yet. Is planned to be used for custom weights initialization.
+
 
 Example configuration, data and create_input_structure function can be found in the examples folder.
+
 
 4. Under the hood:
 ------------------
