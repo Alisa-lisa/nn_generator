@@ -5,7 +5,7 @@ def readme():
             return f.read()
 
 setup(name='nn_generator',
-      version='1.0.4',
+      version='1.0.5',
       description='FC NN configurable via json/YML config file',
       long_description=readme(),
       classifiers=[
@@ -24,7 +24,6 @@ setup(name='nn_generator',
       install_requires=[
             'matplotlib',
             'numpy',
-            'pandas',
             'pyparsing',
             'pytz',
             'PyYAML',
