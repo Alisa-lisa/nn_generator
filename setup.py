@@ -5,7 +5,7 @@ def readme():
             return f.read()
 
 setup(name='nn_generator',
-      version='1.0.3',
+      version='1.0.4',
       description='FC NN configurable via json/YML config file',
       long_description=readme(),
       classifiers=[

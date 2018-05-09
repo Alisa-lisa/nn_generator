@@ -84,7 +84,7 @@ Must have keys:
 
     - "iterations" (int): 
                           Also known as "epochs". The number of times the algorithm is being retrained. Very big number will slow down the learning
-                          plus it might be not a very efficient hyperparameter to tune.
+                          plus it might be not a very efficient hyper-parameter to tune.
                           Very small number of iterations will result in less optimal results.
 
     - "seeded" (bool): 
@@ -111,10 +111,10 @@ Might have keys:
                                  will be used for bias/variance detection within the error analysis. Human expertise can be seen as the desired accuracy for the model.
 
     - "regularization" (float): 
-                                Some float used in L2-norm regularizetion to penalize the model for overfitting (using too many features).
+                                Some float used in L2-norm regularization to penalize the model for over-fitting (using too many features).
 
     - "prediction_confidence" (float): 
-                                       The output probability of the data to be assigned a class is compared to this theshold. Default is 0.7
+                                       The output probability of the data to be assigned a class is compared to this threshold. Default is 0.7
 
     - "init_random" (bool):
                             Not implemented yet. Is planned to be used for custom weights initialization.
