@@ -1,13 +1,8 @@
-from setuptools import setup
-
-def readme():
-      with open('README.rst') as f:
-            return f.read()
+from setuptools import setup, find_packages
 
 setup(name='nn_generator',
-      version='1.0.5',
+      version='1.0.9',
       description='FC NN configurable via json/YML config file',
-      long_description=readme(),
       classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
@@ -19,7 +14,7 @@ setup(name='nn_generator',
       author='Alisa Dammer',
       author_email='alisa.dammer@gmail.com',
       license='MIT',
-      packages=['nn_generator'],
+      packages=find_packages(exclude=['examples.*', 'examples']),
       include_package_data=True,
       install_requires=[
             'matplotlib',
@@ -28,4 +23,5 @@ setup(name='nn_generator',
             'pytz',
             'PyYAML',
       ],
+      python_requires='>=3',
       zip_safe=False)
